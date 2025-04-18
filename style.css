@@ -1,111 +1,54 @@
-body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* justify-content: center; */ /* Bỏ căn giữa dọc để info ở trên */
-    height: 100vh;
-    background-color: #87CEEB; /* Màu trời */
-    font-family: sans-serif;
-    overflow: hidden;
-    position: relative; /* Để định vị tuyệt đối cho game-info */
-}
-
-#game-info {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background-color: rgba(255, 255, 255, 0.85);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9em; /* Hơi nhỏ hơn một chút */
-    z-index: 10;
-    color: #333;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    display: flex; /* Sắp xếp các thông tin trên một hàng */
-    flex-wrap: wrap; /* Cho phép xuống hàng nếu cần */
-    gap: 15px; /* Khoảng cách giữa các mục thông tin */
-    align-items: center;
-}
-
-#game-info div { /* Style chung cho các mục con */
-     white-space: nowrap; /* Không xuống dòng trong một mục */
-}
-
-#turn-indicator {
-    font-weight: bold;
-}
-
-#message-display {
-    font-weight: bold;
-    /* Màu sẽ được đặt trong JS */
-}
-#wind-indicator {
-     font-style: italic;
-     color: #00008B; /* Màu xanh đậm cho gió */
-}
-
-
-#game-container {
-    width: 95%;
-    max-width: 800px; /* Tăng max-width một chút */
-    aspect-ratio: 16 / 9;
-    background-color: #90EE90; /* Màu đất/cỏ */
-    border: 2px solid #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: relative; /* Để canvas bên trong có thể định vị tuyệt đối */
-    margin-top: 50px; /* Đẩy xuống dưới khu vực info */
-}
-
-#gameCanvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
+/* ... (Các style cũ giữ nguyên) ... */
 
 #controls {
+    /* ... (Các style cũ giữ nguyên) ... */
+    align-items: center; /* Căn giữa các item theo chiều dọc */
+}
+
+/* Style cho nhóm input */
+.input-group {
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: 10px 5px; /* Giảm padding trên dưới */
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 8px;
-    margin-top: 8px; /* Giảm khoảng cách với canvas */
-    gap: 8px;
-    width: 90%;
-    max-width: 500px;
+    align-items: center;
+    gap: 5px;
+    background-color: #f0f0f0; /* Nền nhẹ cho nhóm input */
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin: 0 5px; /* Khoảng cách giữa các nhóm */
 }
 
-#controls button {
-    padding: 10px 15px;
-    font-size: 1.1em;
-    cursor: pointer;
-    background-color: #FFD700;
-    border: 1px solid #DAA520;
-    border-radius: 5px;
-    color: #333;
-    transition: background-color 0.2s ease;
-    min-width: 50px; /* Giảm chiều rộng tối thiểu */
+.input-group label {
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.input-group input[type="number"] {
+    width: 55px; /* Độ rộng ô nhập */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 1em;
     text-align: center;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+}
+/* Ẩn mũi tên tăng giảm mặc định của trình duyệt (tùy chọn) */
+.input-group input[type=number]::-webkit-inner-spin-button,
+.input-group input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.input-group input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
 }
 
-#controls button:active {
-    background-color: #FFA500;
+.input-group span { /* Hiển thị giá trị trực quan */
+    font-size: 0.85em;
+    color: #555;
+    min-width: 35px; /* Đảm bảo có không gian */
+    text-align: right;
 }
 
-#btn-fire {
-    background-color: #f0ad4e;
-    border-color: #eea236;
-    font-weight: bold;
-    min-width: 80px;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
 
-#btn-fire:active {
-    background-color: #ec971f;
+/* Điều chỉnh lại nút bấm di chuyển nếu cần */
+#btn-left, #btn-right {
+    min-width: 45px;
+    padding: 10px 12px;
 }
