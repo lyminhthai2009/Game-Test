@@ -13,14 +13,12 @@ const playerHealthDisplay = document.getElementById('player-health');
 const enemyHealthDisplay = document.getElementById('enemy-health');
 const turnDisplay = document.getElementById('turn-indicator');
 const messageDisplay = document.getElementById('message-display');
-const physicsDataDiv = document.getElementById('physics-data'); // Lấy div cha
-// Physics Data Display Elements
+const physicsDataDiv = document.getElementById('physics-data');
 const muzzlePosDisplay = document.getElementById('muzzle-pos');
 const targetPosDisplay = document.getElementById('target-pos');
 const gravityValDisplay = document.getElementById('gravity-val');
 const windValDisplay = document.getElementById('wind-val');
-// const dragValDisplay = document.getElementById('drag-val'); // Bỏ element này
-const windIndicator = document.getElementById('wind-indicator'); // Đã có
+const windIndicator = document.getElementById('wind-indicator'); // <<<--- Đảm bảo ID này khớp với HTML
 
 // --- Game State ---
 let canvasWidth, canvasHeight;
@@ -34,7 +32,7 @@ let switchTurnTimeout = null;
 
 // --- Game Constants ---
 const GRAVITY_ACCELERATION = 0.18;
-const AIR_DRAG_COEFFICIENT = 0; // <<<--- BỎ QUA LỰC CẢN BẰNG CÁCH ĐẶT = 0
+const AIR_DRAG_COEFFICIENT = 0; // Đã bỏ lực cản
 const ENEMY_MOVE_SPEED = 1.5;
 const ENEMY_MOVE_RANGE = 80;
 const enemyFireDelay = 1600;
@@ -98,18 +96,10 @@ function updateEnemyTank() { if (enemyTank.isMoving) { const moveDirection = Mat
 function updateBullets() {
     if (bullets.length === 0) { if (gameState === 'BULLET_FLYING') { switchTurn(); } return; }
     if (gameState !== 'BULLET_FLYING') return;
-
     for (let i = bullets.length - 1; i >= 0; i--) {
         const bullet = bullets[i];
-        // --- Vật lý (Đã bỏ lực cản) ---
-        const ax_total = windAcceleration; // Chỉ còn gió
-        const ay_total = GRAVITY_ACCELERATION; // Chỉ còn trọng lực
-        bullet.vx += ax_total;
-        bullet.vy += ay_total;
-        bullet.x += bullet.vx;
-        bullet.y += bullet.vy;
-        // --- Hết vật lý ---
-
+        const ax_total = windAcceleration; const ay_total = GRAVITY_ACCELERATION;
+        bullet.vx += ax_total; bullet.vy += ay_total; bullet.x += bullet.vx; bullet.y += bullet.vy;
         let hitTargetTank = null; let damage = 0;
         if (bullet.owner === 'player' && checkCollision(bullet, enemyTank)) { hitTargetTank = enemyTank; damage = Math.floor(Math.random() * 11) + 20; }
         else if (bullet.owner === 'enemy' && checkCollision(bullet, tank)) { hitTargetTank = tank; damage = enemyTank.baseDamage + Math.floor(Math.random() * (enemyTank.damageRange + 1)); }
@@ -125,31 +115,18 @@ function dealDamage(targetTank, amount) { targetTank.health -= amount; setMessag
 
 // --- AI Logic ---
 function simulateShot(startX, startY, angleRad, velocity, targetTank) {
-    let simX = startX; let simY = startY;
-    let simVx = Math.cos(angleRad) * velocity;
-    let simVy = Math.sin(angleRad) * velocity;
-    let steps = 0;
+    let simX = startX; let simY = startY; let simVx = Math.cos(angleRad) * velocity; let simVy = Math.sin(angleRad) * velocity; let steps = 0;
     while (simY <= canvasHeight + 100 && steps < MAX_SIMULATION_STEPS) {
-        // --- Vật lý mô phỏng (Đã bỏ lực cản) ---
-        const ax_total = windAcceleration;
-        const ay_total = GRAVITY_ACCELERATION;
-        simVx += ax_total; simVy += ay_total;
-        simX += simVx; simY += simVy;
-        // --- Hết vật lý ---
-        const simBullet = { x: simX, y: simY, radius: 3 };
-        if (checkCollision(simBullet, targetTank)) { return { hit: true, x: simX, y: simY, steps: steps }; }
-        steps++;
-    }
-    return { hit: false, x: simX, y: simY, steps: steps };
+        const ax_total = windAcceleration; const ay_total = GRAVITY_ACCELERATION; simVx += ax_total; simVy += ay_total; simX += simVx; simY += simVy;
+        const simBullet = { x: simX, y: simY, radius: 3 }; if (checkCollision(simBullet, targetTank)) { return { hit: true, x: simX, y: simY, steps: steps }; } steps++;
+    } return { hit: false, x: simX, y: simY, steps: steps };
 }
 
 function enemyAI() {
-    if (gameState !== 'ENEMY_TURN' || gameOver || enemyTank.isMoving) return;
-    setMessage("Địch đang tính toán..."); updateUI();
+    if (gameState !== 'ENEMY_TURN' || gameOver || enemyTank.isMoving) return; setMessage("Địch đang tính toán..."); updateUI();
     setTimeout(() => {
         if (gameState !== 'ENEMY_TURN' || gameOver || enemyTank.isMoving) return;
-        const sourceX = enemyTank.x + enemyTank.width / 2; const sourceY = enemyTank.y - enemyTank.height / 2;
-        const targetX = tank.x + tank.width / 2; const targetY = tank.y - tank.height / 2;
+        const sourceX = enemyTank.x + enemyTank.width / 2; const sourceY = enemyTank.y - enemyTank.height / 2; const targetX = tank.x + tank.width / 2; const targetY = tank.y - tank.height / 2;
         let bestShot = { angle: -Math.PI / 2, power: 10, closestDistSq: Infinity, hit: false };
         const angleStep = Math.PI / 180 * 1.2; const powerStep = 1.2; const minPower = 9; const maxPower = 26;
         for (let power = minPower; power <= maxPower; power += powerStep) {
@@ -159,31 +136,15 @@ function enemyAI() {
                 else { const dx = simResult.x - targetX; const distSq = dx * dx * 1.5 + (simResult.y - targetY) * (simResult.y - targetY); if (distSq < bestShot.closestDistSq) { bestShot = { angle: angle, power: power, closestDistSq: distSq, hit: false }; } }
             } if (bestShot.hit) break;
         }
-        let finalAngle = bestShot.angle; let finalPower = bestShot.power;
-        const errorMagnitude = enemyTank.aimAccuracyError * (Math.PI / 4);
-        finalAngle += (Math.random() - 0.5) * 2 * errorMagnitude;
-        finalPower += (Math.random() - 0.5) * (maxPower * 0.1 * enemyTank.aimAccuracyError);
-        const minEnemyAngle = -Math.PI * 0.95; const maxEnemyAngle = -Math.PI * 0.05;
-        enemyTank.turret.angle = Math.max(minEnemyAngle, Math.min(maxEnemyAngle, finalAngle));
+        let finalAngle = bestShot.angle; let finalPower = bestShot.power; const errorMagnitude = enemyTank.aimAccuracyError * (Math.PI / 4); finalAngle += (Math.random() - 0.5) * 2 * errorMagnitude; finalPower += (Math.random() - 0.5) * (maxPower * 0.1 * enemyTank.aimAccuracyError);
+        const minEnemyAngle = -Math.PI * 0.95; const maxEnemyAngle = -Math.PI * 0.05; enemyTank.turret.angle = Math.max(minEnemyAngle, Math.min(maxEnemyAngle, finalAngle));
         setMessage("Địch bắn!"); fireBullet(enemyTank, Math.max(minPower, finalPower));
     }, 50);
 }
 
 // --- Game Logic ---
-function fireBullet(shooterTank, power) {
-    const pivotX = shooterTank.x + (shooterTank.turret.pivotXOffset ?? shooterTank.width / 2);
-    const pivotY = shooterTank.y - shooterTank.height + (shooterTank.turret.pivotYOffset ?? 0) - 3;
-    const angle = shooterTank.turret.angle;
-    const muzzleX = pivotX + Math.cos(angle) * shooterTank.turret.length;
-    const muzzleY = pivotY + Math.sin(angle) * shooterTank.turret.length;
-    const vx = Math.cos(angle) * power; const vy = Math.sin(angle) * power;
-    bullets.push({ owner: shooterTank.id, x: muzzleX, y: muzzleY, vx: vx, vy: vy, radius: 4 });
-    lastShooterId = shooterTank.id; gameState = 'BULLET_FLYING'; updateUI();
-    if (shooterTank.id === 'player') { tank.canFire = false; setTimeout(() => { if (gameState === 'PLAYER_TURN' || gameState === 'LEVEL_START') { tank.canFire = true; } }, playerFireCooldown); }
-}
-
+function fireBullet(shooterTank, power) { const pivotX = shooterTank.x + (shooterTank.turret.pivotXOffset ?? shooterTank.width / 2); const pivotY = shooterTank.y - shooterTank.height + (shooterTank.turret.pivotYOffset ?? 0) - 3; const angle = shooterTank.turret.angle; const muzzleX = pivotX + Math.cos(angle) * shooterTank.turret.length; const muzzleY = pivotY + Math.sin(angle) * shooterTank.turret.length; const vx = Math.cos(angle) * power; const vy = Math.sin(angle) * power; bullets.push({ owner: shooterTank.id, x: muzzleX, y: muzzleY, vx: vx, vy: vy, radius: 4 }); lastShooterId = shooterTank.id; gameState = 'BULLET_FLYING'; updateUI(); if (shooterTank.id === 'player') { tank.canFire = false; setTimeout(() => { if (gameState === 'PLAYER_TURN' || gameState === 'LEVEL_START') { tank.canFire = true; } }, playerFireCooldown); } }
 function handleFireInput() { if (gameState === 'PLAYER_TURN' && tank.canFire && !gameOver) { const angleDeg = parseFloat(angleInput.value); const velocity = parseFloat(velocityInput.value); if (isNaN(angleDeg) || angleDeg < 0 || angleDeg > 90 || isNaN(velocity) || velocity < 1 || velocity > 25) { setMessage("Giá trị Góc/Lực không hợp lệ!", false); return; } setMessage(""); fireBullet(tank, velocity); } }
-
 function startEnemyMovement() { if (gameOver || enemyTank.isMoving) return; let moveDirection = (Math.random() < 0.5) ? -1 : 1; let targetX = enemyTank.x + moveDirection * (ENEMY_MOVE_RANGE * 0.7 + Math.random() * ENEMY_MOVE_RANGE * 0.6); targetX = Math.max(enemyTank.width * 0.5, Math.min(canvasWidth - enemyTank.width * 1.5, targetX)); if (Math.abs(targetX - enemyTank.x) < 20) { targetX = enemyTank.x - moveDirection * (ENEMY_MOVE_RANGE * 0.5 + Math.random() * ENEMY_MOVE_RANGE * 0.5); targetX = Math.max(enemyTank.width * 0.5, Math.min(canvasWidth - enemyTank.width * 1.5, targetX)); } enemyTank.moveTargetX = targetX; enemyTank.isMoving = true; }
 
 function switchTurn() {
@@ -218,15 +179,14 @@ function nextLevel() { loadLevel(currentLevel + 1); }
 
 // --- UI Update Functions ---
 function updatePhysicsDataDisplay() {
-    if (gameOver || gameState !== 'PLAYER_TURN') { physicsDataDiv.setAttribute('data-inactive', 'true'); return; } // Thêm attribute để CSS xử lý
-    physicsDataDiv.removeAttribute('data-inactive'); // Xóa attribute khi active
-
+    if (gameOver || gameState !== 'PLAYER_TURN') { physicsDataDiv.setAttribute('data-inactive', 'true'); return; }
+    physicsDataDiv.removeAttribute('data-inactive');
     const pivotX = tank.x + tank.turret.pivotXOffset; const pivotY = tank.y - tank.height + tank.turret.pivotYOffset - 3;
     const angle = tank.turret.angle; const muzzleX = pivotX + Math.cos(angle) * tank.turret.length; const muzzleY = pivotY + Math.sin(angle) * tank.turret.length;
     const targetX = enemyTank.x + enemyTank.width / 2; const targetY = enemyTank.y - enemyTank.height / 2;
     muzzlePosDisplay.textContent = `(${muzzleX.toFixed(1)}, ${muzzleY.toFixed(1)})`; targetPosDisplay.textContent = `(${targetX.toFixed(1)}, ${targetY.toFixed(1)})`;
     gravityValDisplay.textContent = GRAVITY_ACCELERATION.toFixed(3); windValDisplay.textContent = windAcceleration.toFixed(4);
-    // dragValDisplay.textContent = AIR_DRAG_COEFFICIENT.toFixed(5); // Đã bỏ lực cản
+    // dragValDisplay không còn tồn tại
 }
 
 function updateUI() {
@@ -243,22 +203,32 @@ function updateUI() {
         case 'LEVEL_START': turnText = "Chuẩn bị..."; turnColor = '#555'; break;
     }
     turnDisplay.textContent = turnText; turnDisplay.style.color = turnColor;
-    if (windAcceleration !== 0 && !gameOver) { windIndicator.textContent = `Gió: ${windAcceleration > 0 ? '>>' : '<<'} ${Math.abs(windAcceleration * 100).toFixed(0)}`; } else { windIndicator.textContent = ""; }
-    const currentAngleVal = parseFloat(angleInput.value).toFixed(0); const currentVelVal = parseFloat(velocityInput.value).toFixed(1);
-    if (angleVisual.textContent !== `(${currentAngleVal}°)`) angleVisual.textContent = `(${currentAngleVal}°)`;
-    if (velocityVisual.textContent !== `(${currentVelVal})`) velocityVisual.textContent = `(${currentVelVal})`;
 
-    // Cập nhật trạng thái active/inactive của physics data
+    // Chỉ cập nhật windIndicator nếu element tồn tại
+    if (windIndicator) {
+        if (windAcceleration !== 0 && !gameOver) {
+            windIndicator.textContent = `Gió: ${windAcceleration > 0 ? '>>' : '<<'} ${Math.abs(windAcceleration * 100).toFixed(0)}`;
+        } else { windIndicator.textContent = ""; }
+    }
+
+
+    const currentAngleVal = parseFloat(angleInput.value).toFixed(0); const currentVelVal = parseFloat(velocityInput.value).toFixed(1);
+    if (angleVisual && angleVisual.textContent !== `(${currentAngleVal}°)`) angleVisual.textContent = `(${currentAngleVal}°)`; // Kiểm tra null
+    if (velocityVisual && velocityVisual.textContent !== `(${currentVelVal})`) velocityVisual.textContent = `(${currentVelVal})`; // Kiểm tra null
+
     updatePhysicsDataDisplay();
 }
 
 function setMessage(msg, isSuccess = false) {
-    messageDisplay.textContent = msg; let msgColor = '#333';
-    if (gameState === 'GAME_OVER') { msgColor = isSuccess ? 'green' : 'red'; }
-    else if (msg.includes("Địch")) { msgColor = enemyTank.color; }
-    else if (msg.includes("Bạn")) { msgColor = tank.color; }
-    else if (msg.includes("trúng đạn")) { msgColor = '#e65c00'; }
-    messageDisplay.style.color = msgColor;
+    // Kiểm tra messageDisplay tồn tại trước khi set
+    if (messageDisplay) {
+        messageDisplay.textContent = msg; let msgColor = '#333';
+        if (gameState === 'GAME_OVER') { msgColor = isSuccess ? 'green' : 'red'; }
+        else if (msg.includes("Địch")) { msgColor = enemyTank.color; }
+        else if (msg.includes("Bạn")) { msgColor = tank.color; }
+        else if (msg.includes("trúng đạn")) { msgColor = '#e65c00'; }
+        messageDisplay.style.color = msgColor;
+    }
 }
 
 // --- Main Game Loop ---
@@ -275,8 +245,8 @@ function setupEventListeners() {
     const handleMoveEnd = (key) => { tank[key] = false; };
     btnLeft.addEventListener('mousedown', () => handleMoveStart('isMovingLeft')); btnLeft.addEventListener('mouseup', () => handleMoveEnd('isMovingLeft')); btnLeft.addEventListener('mouseleave', () => handleMoveEnd('isMovingLeft')); btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); handleMoveStart('isMovingLeft'); }, { passive: false }); btnLeft.addEventListener('touchend', () => handleMoveEnd('isMovingLeft'));
     btnRight.addEventListener('mousedown', () => handleMoveStart('isMovingRight')); btnRight.addEventListener('mouseup', () => handleMoveEnd('isMovingRight')); btnRight.addEventListener('mouseleave', () => handleMoveEnd('isMovingRight')); btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); handleMoveStart('isMovingRight'); }, { passive: false }); btnRight.addEventListener('touchend', () => handleMoveEnd('isMovingRight'));
-    angleInput.addEventListener('input', () => { const angleDeg = parseFloat(angleInput.value); if (!isNaN(angleDeg) && angleDeg >= 0 && angleDeg <= 90) { const angleRad = -(angleDeg * Math.PI / 180); tank.turret.angle = angleRad; angleVisual.textContent = `(${angleDeg.toFixed(0)}°)`; } else { angleVisual.textContent = `(??°)`; } });
-    velocityInput.addEventListener('input', () => { const velocity = parseFloat(velocityInput.value); if (!isNaN(velocity) && velocity >= 1 && velocity <= 25) { velocityVisual.textContent = `(${velocity.toFixed(1)})`; } else { velocityVisual.textContent = `(??)`; } });
+    angleInput.addEventListener('input', () => { const angleDeg = parseFloat(angleInput.value); if (!isNaN(angleDeg) && angleDeg >= 0 && angleDeg <= 90) { const angleRad = -(angleDeg * Math.PI / 180); tank.turret.angle = angleRad; if (angleVisual) angleVisual.textContent = `(${angleDeg.toFixed(0)}°)`; } else { if (angleVisual) angleVisual.textContent = `(??°)`; } });
+    velocityInput.addEventListener('input', () => { const velocity = parseFloat(velocityInput.value); if (!isNaN(velocity) && velocity >= 1 && velocity <= 25) { if (velocityVisual) velocityVisual.textContent = `(${velocity.toFixed(1)})`; } else { if (velocityVisual) velocityVisual.textContent = `(??)`; } });
     btnFire.addEventListener('click', handleFireInput); btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); handleFireInput(); }, { passive: false });
     window.addEventListener('resize', resizeCanvas);
 }
@@ -284,7 +254,7 @@ function setupEventListeners() {
 // --- Initialization ---
 function resizeCanvas() {
     const currentTankHealth = tank.health; const currentEnemyHealth = enemyTank.health;
-    const currentGameState = gameState; const currentGameOver = gameOver; // <<-- SỬA LỖI Ở ĐÂY
+    const currentGameState = gameState; const currentGameOver = gameOver; // <<<--- Đảm bảo sử dụng biến này
     const currentLastShooter = lastShooterId; const currentBullets = bullets.map(b => ({ ...b }));
     const currentAngle = angleInput.value; const currentVelocity = velocityInput.value;
     const currentTankAngle = tank.turret.angle; const currentEnemyIsMoving = enemyTank.isMoving;
@@ -295,20 +265,28 @@ function resizeCanvas() {
     canvas.width = width; canvas.height = height; canvasWidth = canvas.width; canvasHeight = canvas.height;
     tank.y = canvasHeight; enemyTank.y = canvasHeight;
 
+    // Sử dụng currentGameOver đã lưu
     if (!currentGameOver && currentGameState !== 'LEVEL_START') {
         const levelData = levels[currentLevel];
         enemyTank.x = canvasWidth * levelData.enemyXRatio - enemyTank.width / 2;
         enemyTank.x = Math.max(0, Math.min(canvasWidth - enemyTank.width, enemyTank.x));
-        tank.health = currentTankHealth; enemyTank.health = currentEnemyHealth; gameState = currentGameState; gameOver = currentGameOver;
+        tank.health = currentTankHealth; enemyTank.health = currentEnemyHealth; gameState = currentGameState; gameOver = currentGameOver; // Khôi phục gameOver
         lastShooterId = currentLastShooter; bullets = currentBullets; angleInput.value = currentAngle; velocityInput.value = currentVelocity;
         tank.turret.angle = currentTankAngle; enemyTank.isMoving = currentEnemyIsMoving; enemyTank.moveTargetX = currentEnemyMoveTarget;
-        angleVisual.textContent = `(${parseFloat(currentAngle).toFixed(0)}°)`; velocityVisual.textContent = `(${parseFloat(currentVelocity).toFixed(1)})`;
+        if(angleVisual) angleVisual.textContent = `(${parseFloat(currentAngle).toFixed(0)}°)`; // Kiểm tra null
+        if(velocityVisual) velocityVisual.textContent = `(${parseFloat(currentVelocity).toFixed(1)})`; // Kiểm tra null
         bullets.forEach(b => { if (b.y > canvasHeight) b.y = canvasHeight - b.radius; });
-        updateUI(); // Gọi updateUI sẽ tự động gọi updatePhysicsDataDisplay nếu cần
+        updateUI();
     } else { loadLevel(currentLevel); }
 }
 
 // --- Start the game ---
-setupEventListeners();
-resizeCanvas();
-gameLoop();
+// Thêm kiểm tra null cho các element trước khi bắt đầu game loop
+if (!canvas || !ctx || !btnLeft || !btnRight || !angleInput || !velocityInput || !angleVisual || !velocityVisual || !btnFire || !levelDisplay || !playerHealthDisplay || !enemyHealthDisplay || !turnDisplay || !messageDisplay || !physicsDataDiv || !muzzlePosDisplay || !targetPosDisplay || !gravityValDisplay || !windValDisplay || !windIndicator) {
+    console.error("LỖI KHỞI TẠO: Một hoặc nhiều phần tử HTML không được tìm thấy. Kiểm tra lại ID trong HTML và JS.");
+    // Có thể hiển thị thông báo lỗi cho người dùng ở đây
+} else {
+    setupEventListeners();
+    resizeCanvas();      // Chạy lần đầu để lấy kích thước và load level 0
+    gameLoop();          // Bắt đầu vòng lặp nếu không có lỗi
+}
