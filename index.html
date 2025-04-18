@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Bắn Xe Tăng 30/4</title>
+    <title>Xe Tăng Đại Chiến 30/4</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Khu vực hiển thị thông tin game -->
     <div id="game-info">
-        Level: <span id="level-display">1</span>
-        <span id="message-display"></span>
+        <div>Level: <span id="level-display">1</span></div>
+        <div id="player-health">Player HP: 100/100</div>
+        <div id="enemy-health">Enemy HP: 100/100</div>
+        <div id="turn-indicator">Chuẩn bị...</div>
+        <div id="message-display"></div> <!-- Thông báo trạng thái -->
+        <div id="wind-indicator"></div> <!-- Chỉ báo gió -->
     </div>
 
+    <!-- Khung chứa game -->
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
     </div>
 
+    <!-- Bảng điều khiển -->
     <div id="controls">
-        <button id="btn-left"><i class="fas fa-arrow-left"></i></button>
-        <button id="btn-right"><i class="fas fa-arrow-right"></i></button>
-        <button id="btn-turret-up"><i class="fas fa-arrow-up"></i></button>
-        <button id="btn-turret-down"><i class="fas fa-arrow-down"></i></button>
-        <button id="btn-fire">BẮN!</button> <!-- Nút Bắn mới -->
+        <button id="btn-left" title="Di chuyển trái"><i class="fas fa-arrow-left"></i></button>
+        <button id="btn-right" title="Di chuyển phải"><i class="fas fa-arrow-right"></i></button>
+        <button id="btn-turret-up" title="Nâng nòng"><i class="fas fa-arrow-up"></i></button>
+        <button id="btn-turret-down" title="Hạ nòng"><i class="fas fa-arrow-down"></i></button>
+        <button id="btn-fire">BẮN!</button>
     </div>
 
     <script src="script.js"></script>
