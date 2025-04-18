@@ -15,15 +15,26 @@
         <div id="enemy-health">Enemy HP: 100/100</div>
         <div id="turn-indicator">Chuẩn bị...</div>
         <div id="message-display"></div>
-        <div id="wind-indicator"></div>
     </div>
+
+    <!-- Khu vực dữ liệu vật lý cho học sinh -->
+    <div id="physics-data">
+        <h4>Thông số lượt bắn (dùng để tính toán):</h4>
+        <p>Vị trí nòng súng (x, y): <span id="muzzle-pos"></span></p>
+        <p>Vị trí mục tiêu (x, y): <span id="target-pos"></span></p>
+        <p>Trọng lực (g): <span id="gravity-val"></span> (pixel/frame²)</p>
+        <p>Gia tốc gió (ax): <span id="wind-val"></span> (pixel/frame²)</p>
+        <p>Hệ số cản KK (k): <span id="drag-val"></span></p>
+        <!-- Thêm các thông số khác nếu cần -->
+    </div>
+
 
     <!-- Khung chứa game -->
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
     </div>
 
-    <!-- Bảng điều khiển mới -->
+    <!-- Bảng điều khiển -->
     <div id="controls">
         <!-- Di chuyển -->
         <button id="btn-left" title="Di chuyển trái"><i class="fas fa-arrow-left"></i></button>
@@ -33,12 +44,12 @@
         <div class="input-group">
             <label for="angle-input">Góc (0°-90°):</label>
             <input type="number" id="angle-input" name="angle" value="45" min="0" max="90" step="1">
-            <span id="angle-visual">(45°)</span> <!-- Hiển thị trực quan -->
+            <span id="angle-visual">(45°)</span>
         </div>
         <div class="input-group">
             <label for="velocity-input">Lực (1-25):</label>
             <input type="number" id="velocity-input" name="velocity" value="15" min="1" max="25" step="0.5">
-             <span id="velocity-visual">(15)</span> <!-- Hiển thị trực quan -->
+             <span id="velocity-visual">(15.0)</span>
         </div>
 
         <!-- Nút bắn -->
