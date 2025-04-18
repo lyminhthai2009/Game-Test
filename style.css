@@ -1,37 +1,104 @@
-/* ... (Các style cũ giữ nguyên) ... */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */ /* Bỏ căn giữa dọc để info ở trên */
+    height: 100vh;
+    background-color: #87CEEB; /* Màu trời */
+    font-family: sans-serif;
+    overflow: hidden;
+    position: relative; /* Để định vị tuyệt đối cho game-info */
+}
 
 #game-info {
-    position: absolute; /* Hoặc fixed */
-    top: 10px;
-    left: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 8px 12px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 5px 10px;
     border-radius: 5px;
-    font-size: 1.1em;
-    z-index: 10; /* Đảm bảo nằm trên canvas */
+    font-size: 0.9em; /* Hơi nhỏ hơn một chút */
+    z-index: 10;
     color: #333;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex; /* Sắp xếp các thông tin trên một hàng */
+    flex-wrap: wrap; /* Cho phép xuống hàng nếu cần */
+    gap: 15px; /* Khoảng cách giữa các mục thông tin */
+    align-items: center;
+}
+
+#game-info div { /* Style chung cho các mục con */
+     white-space: nowrap; /* Không xuống dòng trong một mục */
+}
+
+#turn-indicator {
+    font-weight: bold;
 }
 
 #message-display {
-    margin-left: 15px;
     font-weight: bold;
-    color: #d9534f; /* Màu đỏ cho thông báo lỗi/thua */
+    /* Màu sẽ được đặt trong JS */
+}
+#wind-indicator {
+     font-style: italic;
+     color: #00008B; /* Màu xanh đậm cho gió */
+}
+
+
+#game-container {
+    width: 95%;
+    max-width: 800px; /* Tăng max-width một chút */
+    aspect-ratio: 16 / 9;
+    background-color: #90EE90; /* Màu đất/cỏ */
+    border: 2px solid #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative; /* Để canvas bên trong có thể định vị tuyệt đối */
+    margin-top: 50px; /* Đẩy xuống dưới khu vực info */
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 #controls {
-    /* ... (Các style cũ giữ nguyên) ... */
-    gap: 8px; /* Có thể giảm gap một chút nếu nhiều nút */
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px 5px; /* Giảm padding trên dưới */
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin-top: 8px; /* Giảm khoảng cách với canvas */
+    gap: 8px;
+    width: 90%;
+    max-width: 500px;
 }
 
 #controls button {
-    /* ... (Style cũ giữ nguyên) ... */
-    padding: 10px 15px; /* Điều chỉnh padding nếu cần */
-    font-size: 1.1em; /* Điều chỉnh cỡ chữ nếu cần */
+    padding: 10px 15px;
+    font-size: 1.1em;
+    cursor: pointer;
+    background-color: #FFD700;
+    border: 1px solid #DAA520;
+    border-radius: 5px;
+    color: #333;
+    transition: background-color 0.2s ease;
+    min-width: 50px; /* Giảm chiều rộng tối thiểu */
+    text-align: center;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#controls button:active {
+    background-color: #FFA500;
 }
 
 #btn-fire {
-    background-color: #f0ad4e; /* Màu cam cho nút bắn */
+    background-color: #f0ad4e;
     border-color: #eea236;
     font-weight: bold;
     min-width: 80px;
@@ -41,9 +108,4 @@
 
 #btn-fire:active {
     background-color: #ec971f;
-}
-
-/* Style cho mục tiêu (sẽ vẽ bằng canvas, nhưng có thể thêm style cho thông báo) */
-.target-hit-message {
-    color: #5cb85c; /* Màu xanh lá cho thông báo thành công */
 }
