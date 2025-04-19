@@ -1,16 +1,21 @@
 /* style.css */
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Đảm bảo canvas được căn giữa theo chiều dọc */
-    background-color: #70c5ce; /* Màu nền giống Flappy Bird gốc */
-    margin: 0;
-    overflow: hidden; /* Quan trọng: ẩn scroll bar */
+
+/* Reset cơ bản */
+* {
+    box-sizing: border-box; /* Tính padding và border vào kích thước phần tử */
 }
 
-canvas {
-    border: 1px solid #000; /* Viền để dễ nhìn canvas */
-    display: block;
-    /* Kích thước sẽ được set bằng JavaScript */
+/*
+   Các quy tắc CSS quan trọng đã được đặt nội tuyến trong index.html
+   để đảm bảo chúng được áp dụng ngay lập tức (ví dụ: margin, overflow, display flex).
+   File này có thể dùng để thêm các style phụ trợ khác nếu cần,
+   hoặc bạn có thể chuyển toàn bộ style từ thẻ <style> trong HTML ra đây.
+*/
+
+/* Ví dụ: Nếu bạn muốn thêm một hiệu ứng nhỏ */
+canvas:hover {
+    cursor: pointer; /* Đổi con trỏ khi di chuột qua canvas */
 }
+
+/* Bạn có thể thêm các quy tắc CSS khác ở đây nếu muốn tùy chỉnh thêm giao diện */
+/* Ví dụ: Định dạng cho các nút bấm hoặc điểm số hiển thị bằng HTML (nếu có) */
