@@ -378,8 +378,8 @@ function drawStartScreen() {
     ctx.fillStyle = '#ccc'; // Màu chữ thông tin mờ hơn
     const startYInfo = canvas.height * 0.85;
     const lineSpacing = infoFontSize * 1.5;
-    ctx.fillText('Create by: [Your Name]', canvas.width / 2, startYInfo);
-    ctx.fillText('Contact: [Your Contact]', canvas.width / 2, startYInfo + lineSpacing);
+    ctx.fillText('Create by: [Tao]', canvas.width / 2, startYInfo);
+    ctx.fillText('Contact: [Lồn]', canvas.width / 2, startYInfo + lineSpacing);
 }
 
 
