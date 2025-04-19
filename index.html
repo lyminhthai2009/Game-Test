@@ -3,67 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Vật Lý Ném Xiên - Đại Chiến Mấy thg nguu</title>
+    <title>Flappy Bird Clone</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Liên kết Font Awesome (tùy chọn, cho icon nút) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Đảm bảo không có scroll bar khi chơi trên mobile */
+        body { margin: 0; overflow: hidden; background-color: #70c5ce; }
+        canvas { display: block; margin: 0 auto; } /* Căn giữa canvas */
+    </style>
 </head>
 <body>
+    <canvas id="gameCanvas"></canvas>
 
-    <!-- Container cho thông tin trên cùng -->
-    <div class="top-info-container">
-        <!-- Khu vực thông tin game chính -->
-        <div id="game-info">
-            <div>Level: <span id="level-display">1</span></div>
-            <div id="player-health">Player HP: 100/100</div>
-            <div id="enemy-health">Enemy HP: 100/100</div>
-            <div id="turn-indicator">Chuẩn bị...</div>
-            <div id="message-display"></div>
-            <div id="wind-indicator"></div> <!-- Chỉ báo gió -->
-        </div>
-
-        <!-- Khu vực dữ liệu vật lý cho học sinh -->
-        <div id="physics-data" data-inactive="true"> <!-- Bắt đầu ở trạng thái inactive -->
-            <h4>Thông số lượt bắn (dùng để tính toán):</h4>
-            <p>Vị trí nòng súng (x, y): <span id="muzzle-pos">(?, ?)</span></p>
-            <p>Vị trí mục tiêu (x, y): <span id="target-pos">(?, ?)</span></p>
-            <p>Gia tốc trọng trường (g): <span id="gravity-val">?</span> (pixel/frame²)</p>
-            <p>Gia tốc gió (ax): <span id="wind-val">?</span> (pixel/frame²)</p>
-            <!-- Đã bỏ hiển thị lực cản -->
-        </div>
-    </div>
-
-
-    <!-- Khung chứa game -->
-    <div id="game-container">
-        <canvas id="gameCanvas"></canvas> <!-- Phần tử Canvas để vẽ game -->
-    </div>
-
-    <!-- Bảng điều khiển -->
-    <div id="controls">
-        <!-- Nút Di chuyển -->
-        <button id="btn-left" title="Di chuyển trái"><i class="fas fa-arrow-left"></i></button>
-        <button id="btn-right" title="Di chuyển phải"><i class="fas fa-arrow-right"></i></button>
-
-        <!-- Nhóm Nhập Góc Bắn -->
-        <div class="input-group">
-            <label for="angle-input">Góc (1°-90°):</label>
-            <input type="number" id="angle-input" name="angle" value="45" min="1" max="90" step="1">
-            <span id="angle-visual">(45°)</span>
-        </div>
-
-        <!-- Nhóm Nhập Lực Bắn (Vận tốc) -->
-        <div class="input-group">
-            <label for="velocity-input">Lực (1-25):</label>
-            <input type="number" id="velocity-input" name="velocity" value="15" min="1" max="25" step="0.5">
-             <span id="velocity-visual">(15.0)</span>
-        </div>
-
-        <!-- Nút Bắn -->
-        <button id="btn-fire">BẮN!</button>
-    </div>
-
-    <!-- Liên kết file JavaScript - ĐẶT Ở CUỐI BODY -->
     <script src="script.js"></script>
 </body>
 </html>
