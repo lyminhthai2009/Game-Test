@@ -2,18 +2,37 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <!-- Rất quan trọng cho hiển thị trên điện thoại -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Flappy Bird Clone</title>
+    <title>Flappy Tank</title>
+    <!-- Liên kết đến file CSS -->
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Đảm bảo không có scroll bar khi chơi trên mobile */
-        body { margin: 0; overflow: hidden; background-color: #70c5ce; }
-        canvas { display: block; margin: 0 auto; } /* Căn giữa canvas */
+        /* CSS nội tuyến để đảm bảo các quy tắc quan trọng được áp dụng ngay */
+        body {
+            margin: 0; /* Loại bỏ khoảng trắng mặc định */
+            overflow: hidden; /* Ngăn thanh cuộn xuất hiện, đặc biệt trên mobile */
+            background-color: #333; /* Màu nền tối fallback */
+            display: flex; /* Sử dụng Flexbox để căn giữa */
+            justify-content: center; /* Căn giữa canvas theo chiều ngang */
+            align-items: center; /* Căn giữa canvas theo chiều dọc */
+            min-height: 100vh; /* Đảm bảo body chiếm toàn bộ chiều cao màn hình */
+        }
+        canvas {
+            display: block; /* Loại bỏ khoảng trống thừa dưới canvas */
+            /* Kích thước sẽ được đặt bởi JavaScript */
+            background-color: #70c5ce; /* Màu nền mặc định của game */
+            /* Thêm viền để dễ nhìn trong quá trình phát triển (có thể xóa sau) */
+            /* border: 1px solid black; */
+        }
     </style>
 </head>
 <body>
+    <!-- Phần tử Canvas nơi game sẽ được vẽ -->
     <canvas id="gameCanvas"></canvas>
 
-    <script src="script.js"></script>
+    <!-- Liên kết đến file JavaScript (đặt cuối body hoặc dùng defer/async) -->
+    <!-- defer đảm bảo HTML được phân tích xong trước khi thực thi script -->
+    <script src="script.js" defer></script>
 </body>
 </html>
