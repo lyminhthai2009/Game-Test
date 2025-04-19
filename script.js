@@ -12,8 +12,8 @@ const difficultySettings = {
         pipeSpeedFactor: 1.5,
         pipeGapFactor: 140, // Khoảng cách lớn hơn
         pipeFrequency: 220, // Xuất hiện thưa hơn
-        gravityFactor: 0.15,
-        boostFactor: -4.5
+        gravityFactor: 0.10,
+        boostFactor: -4.2
     },
     medium: {
         pipeSpeedFactor: 1.8, // Tốc độ mặc định
